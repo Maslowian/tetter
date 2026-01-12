@@ -317,6 +317,12 @@ struct tetter
     //  []<typename t, size_t i, typename... all_types>() { /* ... */ }
 
 	// (C++20)
+    // usefull for casting to complex types
+    // eg.: template <size_t c, typename... ts> struct complex_type; using casted_type = typename /* tetter<...> */::template cast_l<[]<typename... ts>() -> complex_type<2137, ts...> {}>;
+	template <auto lambda_caster>
+	using cast_l = /* return_type */;
+
+	// (C++20)
 	// lambda_iterator must return boolean
 	template <auto lambda_iterator>
 	using find_l = /* find_result */;

@@ -1603,6 +1603,9 @@ struct tetter : public _tetter::_tetter_impl<ts...>
 	}
 
 #if _tetter_unevaluated_lambda // (C++20)
+	template <auto lambda_caster>
+	using cast_l = decltype(lambda_caster.template operator()<ts...>());
+
 	template <auto lambda_iterator>
 	using find_l = _tetter::_try_find_impl<_tetter::_lambda_v_wrapper<lambda_iterator>, _tetter::_enable_t<>, ts...>;
 
