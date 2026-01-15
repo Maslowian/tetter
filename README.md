@@ -61,7 +61,7 @@ static_assert(t_value == false);
 
 ```cpp
 #if Cpp20
-template <tetter_t x>
+template <tetter_c x>
 std::size_t total_size(std::size_t biger_then)
 {
 	return x::invoke_sum([]<typename t>(std::size_t m) {
@@ -432,5 +432,5 @@ inline static constexpr bool is_tetter_v;
 // (C++20)
 // wrapper for is_tetter_v
 template <typename t>
-concept tetter_t;
+concept tetter_c;
 ```

@@ -1276,7 +1276,7 @@ struct _lambda_t_wrapper
 	template <typename t, _size_t i, typename ats>
 	struct type_impl
 	{
-		using type = _lambda_invoke<decltype(lambda), t, i, ats, _enable_t<>>::result_type;
+		using type = _lambda_invoke<const decltype(lambda)&, t, i, ats, _enable_t<>>::result_type;
 	};
 
 	template <typename t, _size_t i, typename ats>
@@ -1289,7 +1289,7 @@ struct _lambda_sort_wrapper
 	template <typename lt, typename rt>
 	struct type
 	{
-		static constexpr auto value = _lambda_invoke_sort<decltype(lambda), lt, rt, _enable_t<>>::call(lambda);
+		static constexpr auto value = _lambda_invoke_sort<const decltype(lambda)&, lt, rt, _enable_t<>>::call(lambda);
 	};
 };
 
@@ -1713,7 +1713,7 @@ inline static constexpr bool is_tetter_v = is_tetter<t>::value;
 
 #if _tetter_concepts // (C++20)
 template <typename t>
-concept tetter_t = is_tetter_v<t>;
+concept tetter_c = is_tetter_v<t>;
 #endif
 
 #endif
