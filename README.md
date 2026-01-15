@@ -153,6 +153,9 @@ struct tetter
 	template <size_t index, size_t amount = 1>
 	using remove = /* tetter<...> */;
 
+	template <size_t index, typename type>
+	using replace = /* tetter<...> */;
+
 	template <typename... generic_types>
 	using join = /* tetter<...> */;
 

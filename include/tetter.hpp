@@ -1130,6 +1130,27 @@ struct _remove_impl<i, c, _tetter<>, _tetter<tlos...>>
 	using type = _tetter<tlos...>;
 };
 
+template <_size_t i, typename t, typename tli, typename tlo>
+struct _replace_impl;
+
+template <_size_t i, typename t, typename tli, typename... tlis, typename... tlos>
+struct _replace_impl<i, t, _tetter<tli, tlis...>, _tetter<tlos...>>
+{
+	using type = typename _replace_impl<i-1, t, _tetter<tlis...>, _tetter<tlos..., tli>>::type;
+};
+
+template <typename t, typename tli, typename... tlis, typename... tlos>
+struct _replace_impl<0, t, _tetter<tli, tlis...>, _tetter<tlos...>>
+{
+	using type = _tetter<tlos..., t, tlis...>;
+};
+
+template <_size_t i, typename t, typename... tlos>
+struct _replace_impl<i, t, _tetter<>, _tetter<tlos...>>
+{
+	static_assert(_false<t>::value, "out of bounds");
+};
+
 #if _tetter_generic_lambdas || _tetter_unevaluated_lambda
 
 template <typename lt, typename t, _size_t i, typename ats, typename enable, typename... args>
@@ -1452,6 +1473,9 @@ struct tetter : public _tetter::_tetter_impl<ts...>
 
 	template <_tetter::_size_t index, _tetter::_size_t amount = 1>
 	using remove = typename _tetter::_remove_impl<index, amount, _tetter::_tetter<ts...>, _tetter::_tetter<>>::type::template cast<tetter>;
+
+	template <_tetter::_size_t index, typename type>
+	using replace = typename _tetter::_replace_impl<index, type, _tetter::_tetter<ts...>, _tetter::_tetter<>>::type::template cast<tetter>;
 
 	template <typename... generic_types>
 	using join = typename _tetter::_join_impl<_tetter::_tetter<generic_types...>, _tetter::_tetter<ts...>>::type::template cast<tetter>;
