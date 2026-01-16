@@ -969,7 +969,7 @@ struct _is_any_of
 	};
 };
 
-template <typename w, typename ts>
+/* template <typename w, typename ts>
 struct _duplicats_impl_impl;
 
 template <typename w, typename... ts>
@@ -982,7 +982,7 @@ template <typename t, _size_t i, typename... ts>
 struct _duplicats_impl
 {
 	static constexpr bool value = !_duplicats_impl_impl<_is_any_of<false, t>, typename _pop_front_impl<i+1, ts...>::type>::value;  
-};
+}; */
 
 template <typename t, typename ts>
 struct _join_impl_impl
@@ -1564,8 +1564,9 @@ struct tetter : public _tetter::_tetter_impl<ts...>
 	template <template <typename current_type, _tetter::_size_t current_index, typename... optional_all_types> typename iterator>
 	using value_i = _tetter::_try_int_value_impl<_tetter::_wrapper<iterator>, _tetter::_enable_t<>, ts...>;
 
-	static constexpr bool has_duplicats = !value<_tetter::_duplicats_impl>::all;
-	using remove_duplicats = typename reverse::template filter<_tetter::_duplicats_impl>::reverse;
+	// TODO: too slow 
+	// static constexpr bool has_duplicats = !value<_tetter::_duplicats_impl>::all;
+	// using remove_duplicats = typename reverse::template filter<_tetter::_duplicats_impl>::reverse;
 
 	template <template <typename current_type, _tetter::_size_t current_index, typename... optional_all_types> typename iterator, typename... args>
 	inline static constexpr void call(args&&... _args)
