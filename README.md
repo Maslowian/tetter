@@ -205,6 +205,7 @@ struct tetter
 	//	{
 	//		static constexpr bool value; // success
 	//		static constexpr size_t index; // if failed to find then find_result::index == tetter<...>::count
+	//		using type = /* type */; // if failed to find then type == void
 	//	}
 	///
 	// iterator must have static constexpr bool ::value

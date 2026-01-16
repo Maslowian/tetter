@@ -476,17 +476,16 @@ struct _find_impl<i, w, _tetter<rt, rts...>, ats>
 {
 private:
 	static constexpr bool found = w::template type<rt, i, ats>::value;
+	using next = _find_impl<i+1, w, _tetter<rts...>, ats>;
 
 public:
-	static constexpr bool value = found ? true : _find_impl<i+1, w, _tetter<rts...>, ats>::value; 
-	static constexpr _size_t index = found ? i : _find_impl<i+1, w, _tetter<rts...>, ats>::index;
-	using type = typename _conditional<found, rt, typename _find_impl<i+1, w, _tetter<rts...>, ats>::type>::type;
+	static constexpr _size_t index = found ? i : next::index;
+	using type = typename _conditional<found, rt, typename next::type>::type;
 };
 
 template <_size_t i, typename w, typename ats>
 struct _find_impl<i, w, _tetter<>, ats>
 {
-	static constexpr bool value = false; 
 	static constexpr _size_t index = i;
 	using type = void;
 };
@@ -833,8 +832,13 @@ struct _try_find_impl
 template <typename w, typename... ts>
 struct _try_find_impl<w, _enable_t<decltype(_find_impl<0, w, _tetter<ts...>, _tetter<ts...>>::index)>, ts...>
 {
-	static constexpr bool value = _find_impl<0, w, _tetter<ts...>, _tetter<ts...>>::value; 
-	static constexpr _size_t index = _find_impl<0, w, _tetter<ts...>, _tetter<ts...>>::index;
+private:
+	using result = _find_impl<0, w, _tetter<ts...>, _tetter<ts...>>;
+
+public:
+	static constexpr _size_t index = result::index;
+	static constexpr bool value = index != sizeof...(ts);
+	using type = typename result::type;
 };
 
 template <typename w, typename enable, typename... ts>
