@@ -1443,6 +1443,8 @@ struct _tetter_sequence_impl<0, t, _tetter<ts...>>
 	using type = _tetter<ts...>; 
 };
 
+}
+
 template <typename... ts>
 struct _tetter_impl
 {
@@ -1455,7 +1457,7 @@ struct _tetter_impl<>
 {
 };
 
-} } // _tetter
+} // _tetter
 
 template <typename... ts>
 struct tetter : public _tetter::_tetter_impl<ts...>
