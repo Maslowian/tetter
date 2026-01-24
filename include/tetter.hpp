@@ -81,6 +81,16 @@ SOFTWARE.
 #endif
 #endif
 
+#ifndef _tetter_force_inline
+#if defined(_MSC_VER)
+#define _tetter_force_inline __forceinline
+#elif defined(__clang__) || defined(__GNUC__)
+#define _tetter_force_inline inline __attribute__((always_inline))
+#else
+#define _tetter_force_inline inline
+#endif
+#endif
+
 namespace _tetter { namespace {
 
 template <bool v, typename tt, typename ft>
@@ -540,7 +550,7 @@ struct _invoke_impl;
 template <typename w, typename t, _size_t i, typename ats, typename... args>
 struct _invoke_impl<w, t, i, ats, _enable_t<decltype(typename w::template type<t, i, ats>{}(_declval<args>()...))>, args...>
 {
-	inline static constexpr _tetter_decltype(typename w::template type<t, i, ats>{}(_declval<args>()...)) call(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(typename w::template type<t, i, ats>{}(_declval<args>()...)) call(args&&... _args)
 	{
 		return typename w::template type<t, i, ats>{}(static_cast<args&&>(_args)...);
 	}
@@ -550,7 +560,7 @@ struct _invoke_impl<w, t, i, ats, _enable_t<decltype(typename w::template type<t
 template <typename w, typename t, _size_t i, typename ats, typename enable, typename... args>
 struct _invoke_static_impl
 {
-	inline static constexpr _tetter_decltype(_invoke_impl<w, t, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_invoke_impl<w, t, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call(args&&... _args)
 	{
 		return _invoke_impl<w, t, i, ats, _enable_t<>, args...>::call(static_cast<args&&>(_args)...);
 	}
@@ -559,7 +569,7 @@ struct _invoke_static_impl
 template <typename w, typename t, _size_t i, typename ats, typename... args>
 struct _invoke_static_impl<w, t, i, ats, _enable_t<decltype(w::template type<t, i, ats>::operator()(_declval<args>()...))>, args...>
 {
-	inline static constexpr _tetter_decltype(w::template type<t, i, ats>::operator()(_declval<args>()...)) call(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(w::template type<t, i, ats>::operator()(_declval<args>()...)) call(args&&... _args)
 	{
 		return w::template type<t, i, ats>::operator()(static_cast<args&&>(_args)...);
 	}
@@ -570,12 +580,12 @@ template <typename w, typename t, _size_t i, typename ats, typename enable, type
 struct _invoke
 {
 #if _tetter_static_call_operator
-	inline static constexpr _tetter_decltype(_invoke_static_impl<w, t, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_invoke_static_impl<w, t, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call(args&&... _args)
 	{
 		return _invoke_static_impl<w, t, i, ats, _enable_t<>, args...>::call(static_cast<args&&>(_args)...);
 	}
 #else
-	inline static constexpr _tetter_decltype(_invoke_impl<w, t, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_invoke_impl<w, t, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call(args&&... _args)
 	{
 		return _invoke_impl<w, t, i, ats, _enable_t<>, args...>::call(static_cast<args&&>(_args)...);
 	}
@@ -585,7 +595,7 @@ struct _invoke
 template <typename w, typename t, _size_t i, typename ats, typename... args>
 struct _invoke<w, t, i, ats, _enable_t<decltype(w::template type<t, i, ats>::call(_declval<args>()...))>, args...>
 {
-	inline static constexpr _tetter_decltype(w::template type<t, i, ats>::call(_declval<args>()...)) call(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(w::template type<t, i, ats>::call(_declval<args>()...)) call(args&&... _args)
 	{
 		return w::template type<t, i, ats>::call(static_cast<args&&>(_args)...);
 	}
@@ -597,7 +607,7 @@ struct _call_impl;
 template <_size_t i, typename w, typename rt, typename srt, typename... rts, typename ats, typename... args>
 struct _call_impl<i, w, _tetter<rt, srt, rts...>, ats, args...>
 {
-	inline static constexpr void call(args&&... _args)
+	_tetter_force_inline static constexpr void call(args&&... _args)
 	{
 		_invoke<w, rt, i, ats, _enable_t<>, args&...>::call(static_cast<args&>(_args)...); 
 		_call_impl<i+1, w, _tetter<srt, rts...>, ats, args...>::call(static_cast<args&&>(_args)...);
@@ -607,7 +617,7 @@ struct _call_impl<i, w, _tetter<rt, srt, rts...>, ats, args...>
 template <_size_t i, typename w, typename rt, typename ats, typename... args>
 struct _call_impl<i, w, _tetter<rt>, ats, args...>
 {
-	inline static constexpr void call(args&&... _args)
+	_tetter_force_inline static constexpr void call(args&&... _args)
 	{
 		_invoke<w, rt, i, ats, _enable_t<>, args...>::call(static_cast<args&&>(_args)...); 
 	}
@@ -616,7 +626,7 @@ struct _call_impl<i, w, _tetter<rt>, ats, args...>
 template <_size_t i, typename w, typename ats, typename... args>
 struct _call_impl<i, w, _tetter<>, ats, args...>
 {
-	inline static constexpr void call(args&&... _args)
+	_tetter_force_inline static constexpr void call(args&&... _args)
 	{}
 };
 
@@ -626,7 +636,7 @@ struct _call_pipe_impl;
 template <_size_t i, typename w, typename rt, typename srt, typename... rts, typename it, typename ats, typename... args>
 struct _call_pipe_impl<i, w, _tetter<rt, srt, rts...>, it, ats, args...>
 {
-	inline static constexpr _tetter_decltype(_call_pipe_impl<i+1, w, _tetter<srt, rts...>, decltype(_invoke<w, rt, i, ats, _enable_t<>, it, args&...>::call(_declval<it>(), _declval<args&>()...)), ats, args...>::call_pipe(
+	_tetter_force_inline static constexpr _tetter_decltype(_call_pipe_impl<i+1, w, _tetter<srt, rts...>, decltype(_invoke<w, rt, i, ats, _enable_t<>, it, args&...>::call(_declval<it>(), _declval<args&>()...)), ats, args...>::call_pipe(
 	                                                                              _declval<decltype(_invoke<w, rt, i, ats, _enable_t<>, it, args&...>::call(_declval<it>(), _declval<args&>()...))>(), _declval<args>()...))
 		call_pipe(it&& _it, args&&... _args)
 	{
@@ -638,7 +648,7 @@ struct _call_pipe_impl<i, w, _tetter<rt, srt, rts...>, it, ats, args...>
 template <_size_t i, typename w, typename rt, typename it, typename ats, typename... args>
 struct _call_pipe_impl<i, w, _tetter<rt>, it, ats, args...>
 {
-	inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, it, args...>::call(_declval<it>(), _declval<args>()...)) call_pipe(it&& _it, args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, it, args...>::call(_declval<it>(), _declval<args>()...)) call_pipe(it&& _it, args&&... _args)
 	{
 		return _invoke<w, rt, i, ats, _enable_t<>, it, args...>::call(static_cast<it&&>(_it), static_cast<args&&>(_args)...); 
 	}
@@ -647,7 +657,7 @@ struct _call_pipe_impl<i, w, _tetter<rt>, it, ats, args...>
 template <_size_t i, typename w, typename it, typename ats, typename... args>
 struct _call_pipe_impl<i, w, _tetter<>, it, ats, args...>
 {
-	inline static constexpr it&& call_pipe(it&& _it, args&&... _args)
+	_tetter_force_inline static constexpr it&& call_pipe(it&& _it, args&&... _args)
 	{
 		return static_cast<it&&>(_it);
 	}
@@ -659,14 +669,14 @@ struct _call_bool_impl;
 template <_size_t i, typename w, typename rt, typename srt, typename... rts, typename ats, typename... args>
 struct _call_bool_impl<i, w, _tetter<rt, srt, rts...>, ats, args...>
 {
-	inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args&...>::call(_declval<args&>()...) && 
+	_tetter_force_inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args&...>::call(_declval<args&>()...) && 
 		_call_bool_impl<i+1, w, _tetter<srt, rts...>, ats, args...>::call_all(_declval<args>()...)) call_all(args&&... _args)
 	{
 		return _invoke<w, rt, i, ats, _enable_t<>, args&...>::call(static_cast<args&>(_args)...) && 
 			_call_bool_impl<i+1, w, _tetter<srt, rts...>, ats, args...>::call_all(static_cast<args&&>(_args)...);
 	}
 
-	inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args&...>::call(_declval<args&>()...) || 
+	_tetter_force_inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args&...>::call(_declval<args&>()...) || 
 		_call_bool_impl<i+1, w, _tetter<srt, rts...>, ats, args...>::call_any(_declval<args>()...)) call_any(args&&... _args)
 	{
 		return _invoke<w, rt, i, ats, _enable_t<>, args&...>::call(static_cast<args&>(_args)...) || 
@@ -677,12 +687,12 @@ struct _call_bool_impl<i, w, _tetter<rt, srt, rts...>, ats, args...>
 template <_size_t i, typename w, typename rt, typename ats, typename... args>
 struct _call_bool_impl<i, w, _tetter<rt>, ats, args...>
 {
-	inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call_all(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call_all(args&&... _args)
 	{
 		return _invoke<w, rt, i, ats, _enable_t<>, args...>::call(static_cast<args&&>(_args)...); 
 	}
 
-	inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call_any(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call_any(args&&... _args)
 	{
 		return _invoke<w, rt, i, ats, _enable_t<>, args...>::call(static_cast<args&&>(_args)...); 
 	}
@@ -691,12 +701,12 @@ struct _call_bool_impl<i, w, _tetter<rt>, ats, args...>
 template <_size_t i, typename w, typename ats, typename... args>
 struct _call_bool_impl<i, w, _tetter<>, ats, args...>
 {
-	inline static constexpr bool call_all(args&&... _args)
+	_tetter_force_inline static constexpr bool call_all(args&&... _args)
 	{
 		return true;
 	}
 
-	inline static constexpr bool call_any(args&&... _args)
+	_tetter_force_inline static constexpr bool call_any(args&&... _args)
 	{
 		return false;
 	}
@@ -708,14 +718,14 @@ struct _call_int_impl;
 template <_size_t i, typename w, typename rt, typename srt, typename... rts, typename ats, typename... args>
 struct _call_int_impl<i, w, _tetter<rt, srt, rts...>, ats, args...>
 {
-	inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args&...>::call(_declval<args&>()...) + 
+	_tetter_force_inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args&...>::call(_declval<args&>()...) + 
 		_call_int_impl<i+1, w, _tetter<srt, rts...>, ats, args...>::call_sum(_declval<args>()...)) call_sum(args&&... _args)
 	{
 		return _invoke<w, rt, i, ats, _enable_t<>, args&...>::call(static_cast<args&>(_args)...) +
 			_call_int_impl<i+1, w, _tetter<srt, rts...>, ats, args...>::call_sum(static_cast<args&&>(_args)...);
 	}
 
-	inline static constexpr decltype(_invoke<w, rt, i, ats, _enable_t<>, args&...>::call(_declval<args&>()...)) call_min(args&&... _args)
+	_tetter_force_inline static constexpr decltype(_invoke<w, rt, i, ats, _enable_t<>, args&...>::call(_declval<args&>()...)) call_min(args&&... _args)
 	{
 		auto this_value = _invoke<w, rt, i, ats, _enable_t<>, args&...>::call(static_cast<args&>(_args)...);
 		auto other_value = _call_int_impl<i+1, w, _tetter<srt, rts...>, ats, args...>::call_min(static_cast<args&&>(_args)...);
@@ -726,7 +736,7 @@ struct _call_int_impl<i, w, _tetter<rt, srt, rts...>, ats, args...>
 			return other_value;
 	}
 
-	inline static constexpr decltype(_invoke<w, rt, i, ats, _enable_t<>, args&...>::call(_declval<args&>()...)) call_max(args&&... _args)
+	_tetter_force_inline static constexpr decltype(_invoke<w, rt, i, ats, _enable_t<>, args&...>::call(_declval<args&>()...)) call_max(args&&... _args)
 	{
 		auto this_value = _invoke<w, rt, i, ats, _enable_t<>, args&...>::call(static_cast<args&>(_args)...);
 		auto other_value = _call_int_impl<i+1, w, _tetter<srt, rts...>, ats, args...>::call_max(static_cast<args&&>(_args)...);
@@ -741,17 +751,17 @@ struct _call_int_impl<i, w, _tetter<rt, srt, rts...>, ats, args...>
 template <_size_t i, typename w, typename rt, typename ats, typename... args>
 struct _call_int_impl<i, w, _tetter<rt>, ats, args...>
 {
-	inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call_sum(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call_sum(args&&... _args)
 	{
 		return _invoke<w, rt, i, ats, _enable_t<>, args...>::call(static_cast<args&&>(_args)...); 
 	}
 
-	inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call_min(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call_min(args&&... _args)
 	{
 		return _invoke<w, rt, i, ats, _enable_t<>, args...>::call(static_cast<args&&>(_args)...); 
 	}
 
-	inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call_max(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_invoke<w, rt, i, ats, _enable_t<>, args...>::call(_declval<args>()...)) call_max(args&&... _args)
 	{
 		return _invoke<w, rt, i, ats, _enable_t<>, args...>::call(static_cast<args&&>(_args)...); 
 	}
@@ -760,17 +770,17 @@ struct _call_int_impl<i, w, _tetter<rt>, ats, args...>
 template <_size_t i, typename w, typename ats, typename... args>
 struct _call_int_impl<i, w, _tetter<>, ats, args...>
 {
-	inline static constexpr int call_sum(args&&... _args)
+	_tetter_force_inline static constexpr int call_sum(args&&... _args)
 	{
 		return 0; 
 	}
 
-	inline static constexpr int call_min(args&&... _args)
+	_tetter_force_inline static constexpr int call_min(args&&... _args)
 	{
 		return 0; 
 	}
 
-	inline static constexpr int call_max(args&&... _args)
+	_tetter_force_inline static constexpr int call_max(args&&... _args)
 	{
 		return 0; 
 	}
@@ -874,7 +884,7 @@ struct _try_call_impl
 template <typename w, typename... args, typename... ts>
 struct _try_call_impl<w, _tetter<args...>, _enable_t<decltype(_call_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call(_declval<args>()...))>, ts...>
 {
-	inline static constexpr void call(args&&... _args)
+	_tetter_force_inline static constexpr void call(args&&... _args)
 	{
 		_call_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call(static_cast<args&&>(_args)...);
 	}
@@ -889,7 +899,7 @@ struct _try_call_pipe_impl
 template <typename w, typename it, typename... args, typename... ts>
 struct _try_call_pipe_impl<w, it, _tetter<args...>, _enable_t<decltype(_call_pipe_impl<0, w, _tetter<ts...>, it, _tetter<ts...>, args...>::call_pipe(_declval<it>(), _declval<args>()...))>, ts...>
 {
-	inline static constexpr _tetter_decltype(_call_pipe_impl<0, w, _tetter<ts...>, it, _tetter<ts...>, args...>::call_pipe(_declval<it>(), _declval<args>()...)) call_pipe(it&& _iv, args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_call_pipe_impl<0, w, _tetter<ts...>, it, _tetter<ts...>, args...>::call_pipe(_declval<it>(), _declval<args>()...)) call_pipe(it&& _iv, args&&... _args)
 	{
 		return _call_pipe_impl<0, w, _tetter<ts...>, it, _tetter<ts...>, args...>::call_pipe(static_cast<it&&>(_iv), static_cast<args&&>(_args)...);
 	}
@@ -905,17 +915,17 @@ template <typename w, typename... args, typename... ts>
 struct _try_call_bool_impl<w, _tetter<args...>, _enable_t<decltype(_call_bool_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_all(_declval<args>()...)),
                                                           decltype(!_call_bool_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_any(_declval<args>()...))>, ts...>
 {
-	inline static constexpr _tetter_decltype(_call_bool_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_all(_declval<args>()...)) call_all(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_call_bool_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_all(_declval<args>()...)) call_all(args&&... _args)
 	{
 		return _call_bool_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_all(static_cast<args&&>(_args)...);
 	}
 
-	inline static constexpr _tetter_decltype(_call_bool_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_any(_declval<args>()...)) call_any(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_call_bool_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_any(_declval<args>()...)) call_any(args&&... _args)
 	{
 		return _call_bool_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_any(static_cast<args&&>(_args)...);
 	}
 
-	inline static constexpr _tetter_decltype(!call_any(_declval<args>()...)) call_none(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(!call_any(_declval<args>()...)) call_none(args&&... _args)
 	{
 		return !call_any(static_cast<args&&>(_args)...);
 	}
@@ -932,22 +942,22 @@ struct _try_call_int_impl<w, _tetter<args...>, _enable_t<decltype(_call_int_impl
                                                          decltype(_call_int_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_min(_declval<args>()...)),
 														 decltype(_call_int_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_max(_declval<args>()...))>, ts...>
 {
-	inline static constexpr _tetter_decltype(_call_int_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_sum(_declval<args>()...)) call_sum(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_call_int_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_sum(_declval<args>()...)) call_sum(args&&... _args)
 	{
 		return _call_int_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_sum(static_cast<args&&>(_args)...);
 	}
 
-	inline static constexpr _tetter_decltype(call_sum(_declval<args>()...) / _declval<_size_t>()) call_avg(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(call_sum(_declval<args>()...) / _declval<_size_t>()) call_avg(args&&... _args)
 	{
 		return call_sum(static_cast<args&&>(_args)...) / static_cast<_size_t>(sizeof...(ts) > 0 ? sizeof...(ts) : 1);
 	}
 
-	inline static constexpr _tetter_decltype(_call_int_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_min(_declval<args>()...)) call_min(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_call_int_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_min(_declval<args>()...)) call_min(args&&... _args)
 	{
 		return _call_int_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_min(static_cast<args&&>(_args)...);
 	}
 
-	inline static constexpr _tetter_decltype(_call_int_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_max(_declval<args>()...)) call_max(args&&... _args)
+	_tetter_force_inline static constexpr _tetter_decltype(_call_int_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_max(_declval<args>()...)) call_max(args&&... _args)
 	{
 		return _call_int_impl<0, w, _tetter<ts...>, _tetter<ts...>, args...>::call_max(static_cast<args&&>(_args)...);
 	}
@@ -1168,7 +1178,7 @@ struct _lambda_invoke_impl<lt, t, i, ats, _enable_t<decltype(_declval<lt>().temp
 {
 	using result_type = decltype(_declval<lt>().template operator()<t>(_declval<args>()...));
 
-	inline static constexpr auto call(lt&& l, args&&... _args)
+	_tetter_force_inline static constexpr auto call(lt&& l, args&&... _args)
 	{
 		return static_cast<lt&&>(l).template operator()<t>(static_cast<args&&>(_args)...);
 	}
@@ -1179,7 +1189,7 @@ struct _lambda_invoke_impl<lt, t, i, ats, _enable_t<decltype(_declval<lt>().temp
 {
 	using result_type = decltype(_declval<lt>().template operator()<i>(_declval<args>()...));
 
-	inline static constexpr auto call(lt&& l, args&&... _args)
+	_tetter_force_inline static constexpr auto call(lt&& l, args&&... _args)
 	{
 		return static_cast<lt&&>(l).template operator()<i>(static_cast<args&&>(_args)...);
 	}
@@ -1190,7 +1200,7 @@ struct _lambda_invoke_impl<lt, t, i, ats, _enable_t<decltype(_declval<lt>().temp
 {
 	using result_type = decltype(_declval<lt>().template operator()<t, i>(_declval<args>()...));
 
-	inline static constexpr auto call(lt&& l, args&&... _args)
+	_tetter_force_inline static constexpr auto call(lt&& l, args&&... _args)
 	{
 		return static_cast<lt&&>(l).template operator()<t, i>(static_cast<args&&>(_args)...);
 	}
@@ -1201,7 +1211,7 @@ struct _lambda_invoke
 {
 	using result_type = typename _lambda_invoke_impl<lt, t, i, ats, _enable_t<>, args...>::result_type;
 
-	inline static constexpr auto call(lt&& l, args&&... _args)
+	_tetter_force_inline static constexpr auto call(lt&& l, args&&... _args)
 	{
 		return _lambda_invoke_impl<lt, t, i, ats, _enable_t<>, args...>::call(static_cast<lt&&>(l), static_cast<args&&>(_args)...);
 	}
@@ -1212,7 +1222,7 @@ struct _lambda_invoke<lt, t, i, _tetter<ats...>, _enable_t<decltype(_declval<lt>
 {
 	using result_type = decltype(_declval<lt>().template operator()<t, ats...>(_declval<args>()...));
 
-	inline static constexpr auto call(lt&& l, args&&... _args)
+	_tetter_force_inline static constexpr auto call(lt&& l, args&&... _args)
 	{
 		return static_cast<lt&&>(l).template operator()<t, ats...>(static_cast<args&&>(_args)...);
 	}
@@ -1223,7 +1233,7 @@ struct _lambda_invoke<lt, t, i, _tetter<ats...>, _enable_t<decltype(_declval<lt>
 {
 	using result_type = decltype(_declval<lt>().template operator()<i, ats...>(_declval<args>()...));
 
-	inline static constexpr auto call(lt&& l, args&&... _args)
+	_tetter_force_inline static constexpr auto call(lt&& l, args&&... _args)
 	{
 		return static_cast<lt&&>(l).template operator()<i, ats...>(static_cast<args&&>(_args)...);
 	}
@@ -1234,7 +1244,7 @@ struct _lambda_invoke<lt, t, i, _tetter<ats...>, _enable_t<decltype(_declval<lt>
 {
 	using result_type = decltype(_declval<lt>().template operator()<t, i, ats...>(_declval<args>()...));
 
-	inline static constexpr auto call(lt&& l, args&&... _args)
+	_tetter_force_inline static constexpr auto call(lt&& l, args&&... _args)
 	{
 		return static_cast<lt&&>(l).template operator()<t, i, ats...>(static_cast<args&&>(_args)...);
 	}
@@ -1251,7 +1261,7 @@ struct _lambda_invoke_sort<lt, lft, rit, _enable_t<decltype(_declval<lt>().templ
 {
 	using result_type = decltype(_declval<lt>().template operator()<lft, rit>());
 
-	inline static constexpr auto call(lt&& l)
+	_tetter_force_inline static constexpr auto call(lt&& l)
 	{
 		return static_cast<lt&&>(l).template operator()<lft, rit>();
 	}
@@ -1265,7 +1275,7 @@ template <typename t, _size_t i, typename... ts>
 struct _lambda_impl
 {
 	template <typename lt, typename... args>
-	inline static constexpr auto call(lt&& l, args&&... _args)
+	_tetter_force_inline static constexpr auto call(lt&& l, args&&... _args)
 	{
 		return _lambda_invoke<lt, t, i, _tetter<ts...>, _enable_t<>, args...>::call(static_cast<lt&&>(l), static_cast<args&&>(_args)...);
 	}
@@ -1275,7 +1285,7 @@ template <typename t, _size_t i, typename... ts>
 struct _lambda_pipe_impl
 {
 	template <typename ft, typename lt, typename... args>
-	inline static constexpr auto call(ft&& f, lt&& l, args&&... _args)
+	_tetter_force_inline static constexpr auto call(ft&& f, lt&& l, args&&... _args)
 	{
 		return _lambda_invoke<lt, t, i, _tetter<ts...>, _enable_t<>, ft, args...>::call(static_cast<lt&&>(l), static_cast<ft&&>(f), static_cast<args&&>(_args)...);
 	}
