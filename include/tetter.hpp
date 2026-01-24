@@ -1723,6 +1723,12 @@ struct tetter : public _tetter::_tetter_impl<ts...>
 	{
 		return call_max<_tetter::_lambda_impl>(static_cast<lambda&&>(_lambda), static_cast<args&&>(_args)...);
 	}
+
+	template <typename lambda, typename... args>
+	inline static constexpr auto cast_invoke(lambda&& _lambda, args&&... _args)
+	{
+		return static_cast<lambda&&>(_lambda).template operator()<ts...>(static_cast<args&&>(_args)...);
+	}
 #endif
 };
 

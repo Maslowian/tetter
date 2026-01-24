@@ -405,6 +405,12 @@ struct tetter
 	// wrapper for call_max
 	template <typename lambda, typename... args>
 	static constexpr auto invoke_max(lambda&& _lambda, args&&... _args);
+
+	// (C++20)
+    // usefull for casting to template functions
+    // lambda must take: []<typename... all_types>(/* ... */) { /* ... */ }
+	template <typename lambda, typename... args>
+	static constexpr auto cast_invoke(lambda&& _lambda, args&&... _args);
 };
 
 
