@@ -91,7 +91,7 @@ SOFTWARE.
 #endif
 #endif
 
-namespace _tetter { namespace {
+namespace _tetter {
 
 template <bool v, typename tt, typename ft>
 struct _conditional;
@@ -1311,7 +1311,7 @@ struct _lambda_t_wrapper
 	template <typename t, _size_t i, typename ats>
 	struct type_impl
 	{
-		using type = _lambda_invoke<const decltype(lambda)&, t, i, ats, _enable_t<>>::result_type;
+		using type = typename _lambda_invoke<const decltype(lambda)&, t, i, ats, _enable_t<>>::result_type;
 	};
 
 	template <typename t, _size_t i, typename ats>
@@ -1452,8 +1452,6 @@ struct _tetter_sequence_impl<0, t, _tetter<ts...>>
 {
 	using type = _tetter<ts...>; 
 };
-
-}
 
 template <typename... ts>
 struct _tetter_impl
