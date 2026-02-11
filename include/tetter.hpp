@@ -650,7 +650,9 @@ template <_size_t i, typename w, typename ats, typename... args>
 struct _call_impl<i, w, _tetter<>, ats, args...>
 {
 	_tetter_force_inline static constexpr void call(args&&... _args)
-	{}
+	{
+		((void) _args, ...);
+	}
 };
 
 template <_size_t i, typename w, typename rts, typename it, typename ats, typename... args>
@@ -726,11 +728,13 @@ struct _call_bool_impl<i, w, _tetter<>, ats, args...>
 {
 	_tetter_force_inline static constexpr bool call_all(args&&... _args)
 	{
+		((void) _args, ...);
 		return true;
 	}
 
 	_tetter_force_inline static constexpr bool call_any(args&&... _args)
 	{
+		((void) _args, ...);
 		return false;
 	}
 };
@@ -795,16 +799,19 @@ struct _call_int_impl<i, w, _tetter<>, ats, args...>
 {
 	_tetter_force_inline static constexpr int call_sum(args&&... _args)
 	{
+		((void) _args, ...);
 		return 0; 
 	}
 
 	_tetter_force_inline static constexpr int call_min(args&&... _args)
 	{
+		((void) _args, ...);
 		return 0; 
 	}
 
 	_tetter_force_inline static constexpr int call_max(args&&... _args)
 	{
+		((void) _args, ...);
 		return 0; 
 	}
 };
