@@ -123,9 +123,9 @@ static_assert(std::is_same<tetter_from_args<decltype(&example_class::function)>,
 > [!NOTE]
 > By passing rvalue-ref args to `tetter<...>::call` or `tetter<...>::call_XXX`, only the last call will get rvalue-ref args.
 >
-> Exception is first argument of the `tetter<...>::call_pipe`, it always can be rvalue-ref;
+> Exception is first argument of the `tetter<...>::call_pipe`, it is always rvalue-ref;
 >
-> eg.: `tetter<a, b, c>::invoke([]<typename t>(auto&& arg){ print(is_rvalue_ref<decltype(arg)>); }, std::move(variable))` -> `0` `0` `1`
+> eg.: `tetter<a, b, c>::invoke([]<typename t>(PrintConstructors arg){ /* ... */ }, std::move(variable))` -> `Copied` `Copied` `Moved`
 
 ```cpp
 template <typename... ts>
