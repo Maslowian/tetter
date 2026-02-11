@@ -31,10 +31,13 @@ SOFTWARE.
 #define tetter_version_minor 0
 #define tetter_version_patch 0
 
-#define _tetter_check(x, v) (defined(__ ## x) ? (__ ## x >= v) : (__cplusplus >= v)) 
-
 #ifndef _tetter_decltype
-#if _tetter_check(cpp_decltype_auto, 201304L)
+#ifdef __cpp_decltype_auto
+#define _tetter__cpp_decltype_auto __cpp_decltype_auto
+#else
+#define _tetter__cpp_decltype_auto __cplusplus
+#endif
+#if _tetter__cpp_decltype_auto >= 201304L
 #define _tetter_decltype(...) decltype(auto) 
 #else
 #define _tetter_decltype(...) decltype(__VA_ARGS__)
@@ -42,7 +45,12 @@ SOFTWARE.
 #endif
 
 #ifndef _tetter_variable_templates
-#if _tetter_check(cpp_variable_templates, 201304L)
+#ifdef __cpp_variable_templates
+#define _tetter__cpp_variable_templates __cpp_variable_templates
+#else
+#define _tetter__cpp_variable_templates __cplusplus
+#endif
+#if _tetter__cpp_variable_templates >= 201304L
 #define _tetter_variable_templates true
 #else
 #define _tetter_variable_templates false
@@ -50,7 +58,12 @@ SOFTWARE.
 #endif
 
 #ifndef _tetter_generic_lambdas
-#if _tetter_check(cpp_generic_lambdas, 201707L)
+#ifdef __cpp_generic_lambdas
+#define _tetter__cpp_generic_lambdas __cpp_generic_lambdas
+#else
+#define _tetter__cpp_generic_lambdas __cplusplus
+#endif
+#if _tetter__cpp_generic_lambdas >= 201707L
 #define _tetter_generic_lambdas true
 #else
 #define _tetter_generic_lambdas false
@@ -58,7 +71,12 @@ SOFTWARE.
 #endif
 
 #ifndef _tetter_concepts
-#if _tetter_check(cpp_concepts, 201907L)
+#ifdef __cpp_concepts
+#define _tetter__cpp_concepts __cpp_concepts
+#else
+#define _tetter__cpp_concepts __cplusplus
+#endif
+#if _tetter__cpp_concepts >= 201907L
 #define _tetter_concepts true
 #else
 #define _tetter_concepts false
@@ -66,7 +84,7 @@ SOFTWARE.
 #endif
 
 #ifndef _tetter_unevaluated_lambda
-#if _tetter_check(cplusplus, 202002L)
+#if __cplusplus >= 202002L
 #define _tetter_unevaluated_lambda true
 #else
 #define _tetter_unevaluated_lambda false 
@@ -74,7 +92,12 @@ SOFTWARE.
 #endif
 
 #ifndef _tetter_static_call_operator
-#if _tetter_check(cpp_static_call_operator, 202207L)
+#ifdef __cpp_static_call_operator
+#define _tetter__cpp_static_call_operator __cpp_static_call_operator
+#else
+#define _tetter__cpp_static_call_operator __cplusplus
+#endif
+#if _tetter__cpp_static_call_operator >= 202207L
 #define _tetter_static_call_operator true
 #else
 #define _tetter_static_call_operator false
