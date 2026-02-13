@@ -1,4 +1,4 @@
-/* tetter - https://github.com/Maslowian/tetter */
+/* tetter - https://github.com/maslowian/tetter */
 
 /* 
 MIT License
